@@ -14,7 +14,7 @@ from online_env_utils import make_online_env
 from utils.datasets import ReplayBuffer
 from utils.evaluation import evaluate, flatten
 from utils.flax_utils import restore_agent, save_agent
-#from utils.log_utils import CsvLogger, get_exp_name, get_flag_dict, get_wandb_video, setup_wandb
+from utils.log_utils import CsvLogger, get_exp_name, get_flag_dict #, get_wandb_video, setup_wandb
 from viz_utils import visualize_trajs
 
 FLAGS = flags.FLAGS
