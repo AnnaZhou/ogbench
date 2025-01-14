@@ -7,7 +7,7 @@ from collections import defaultdict
 import jax
 import numpy as np
 import tqdm
-import wandb
+#import wandb
 from absl import app, flags
 from agents import agents
 from ml_collections import config_flags
@@ -45,7 +45,7 @@ config_flags.DEFINE_config_file('agent', 'agents/gciql.py', lock_config=False)
 def main(_):
     # Set up logger.
     exp_name = get_exp_name(FLAGS.seed)
-    setup_wandb(project='OGBench', group=FLAGS.run_group, name=exp_name)
+    #setup_wandb(project='OGBench', group=FLAGS.run_group, name=exp_name)
 
     FLAGS.save_dir = os.path.join(FLAGS.save_dir, wandb.run.project, FLAGS.run_group, exp_name)
     os.makedirs(FLAGS.save_dir, exist_ok=True)
