@@ -6,7 +6,7 @@ import time
 import jax
 import numpy as np
 import tqdm
-import wandb
+#import wandb
 from absl import app, flags
 from agents import agents
 from ml_collections import config_flags
@@ -14,7 +14,7 @@ from online_env_utils import make_online_env
 from utils.datasets import ReplayBuffer
 from utils.evaluation import evaluate, flatten
 from utils.flax_utils import restore_agent, save_agent
-from utils.log_utils import CsvLogger, get_exp_name, get_flag_dict, get_wandb_video, setup_wandb
+#from utils.log_utils import CsvLogger, get_exp_name, get_flag_dict, get_wandb_video, setup_wandb
 from viz_utils import visualize_trajs
 
 FLAGS = flags.FLAGS
@@ -45,13 +45,16 @@ flags.DEFINE_integer('eval_on_cpu', 1, 'Whether to evaluate on CPU.')
 
 config_flags.DEFINE_config_file('agent', '../impls/agents/sac.py', lock_config=False)
 
+import os
+os.environ["WANDB_MODE"] = "disabled"  # Disable WandB
+
 
 def main(_):
     # Set up logger.
     exp_name = get_exp_name(FLAGS.seed)
-    setup_wandb(project='OGBench', group=FLAGS.run_group, name=exp_name)
+    #setup_wandb(project='OGBench', group=FLAGS.run_group, name=exp_name)
 
-    FLAGS.save_dir = os.path.join(FLAGS.save_dir, wandb.run.project, FLAGS.run_group, exp_name)
+    #FLAGS.save_dir = os.path.join(FLAGS.save_dir, wandb.run.project, FLAGS.run_group, exp_name)
     os.makedirs(FLAGS.save_dir, exist_ok=True)
     flag_dict = get_flag_dict()
     with open(os.path.join(FLAGS.save_dir, 'flags.json'), 'w') as f:
@@ -143,7 +146,7 @@ def main(_):
             train_metrics['time/total_time'] = time.time() - first_time
             train_metrics.update(expl_metrics)
             last_time = time.time()
-            wandb.log(train_metrics, step=i)
+            #wandb.log(train_metrics, step=i)
             train_logger.log(train_metrics, step=i)
 
         # Evaluate agent.
@@ -166,15 +169,15 @@ def main(_):
             )
             eval_metrics.update({f'evaluation/{k}': v for k, v in eval_info.items()})
 
-            if FLAGS.video_episodes > 0:
-                video = get_wandb_video(renders=renders)
-                eval_metrics['video'] = video
+            #if FLAGS.video_episodes > 0:
+                #video = get_wandb_video(renders=renders)
+                #eval_metrics['video'] = video
 
             traj_image = visualize_trajs(FLAGS.env_name, trajs)
-            if traj_image is not None:
-                eval_metrics['traj'] = wandb.Image(traj_image)
+            #if traj_image is not None:
+            #    eval_metrics['traj'] = wandb.Image(traj_image)
 
-            wandb.log(eval_metrics, step=i)
+            #wandb.log(eval_metrics, step=i)
             eval_logger.log(eval_metrics, step=i)
 
         # Save agent.
