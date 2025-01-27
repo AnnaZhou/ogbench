@@ -21,15 +21,15 @@ FLAGS = flags.FLAGS
 
 flags.DEFINE_string('run_group', 'Debug', 'Run group.')
 flags.DEFINE_integer('seed', 0, 'Random seed.')
-flags.DEFINE_string('env_name', 'antmaze-large-navigate-v0', 'Environment (dataset) name.')
+flags.DEFINE_string('env_name', 'antmaze-medium-navigate-v0', 'Environment (dataset) name.')
 flags.DEFINE_string('save_dir', 'exp/', 'Save directory.')
 flags.DEFINE_string('restore_path', None, 'Restore path.')
 flags.DEFINE_integer('restore_epoch', None, 'Restore epoch.')
 
-flags.DEFINE_integer('train_steps', 2000, 'Number of training steps.')
+flags.DEFINE_integer('train_steps', 1000, 'Number of training steps.')
 flags.DEFINE_integer('log_interval', 500, 'Logging interval.')
 flags.DEFINE_integer('eval_interval', 1000, 'Evaluation interval.')
-flags.DEFINE_integer('save_interval', 2000, 'Saving interval.')
+flags.DEFINE_integer('save_interval', 500, 'Saving interval.')
 
 flags.DEFINE_integer('eval_tasks', None, 'Number of tasks to evaluate (None for all).')
 flags.DEFINE_integer('eval_episodes', 20, 'Number of episodes for each task.')
@@ -154,6 +154,7 @@ def main(_):
         # Save agent.
         if i % FLAGS.save_interval == 0:
             save_agent(agent, FLAGS.save_dir, i)
+            print(FLAGS.save_dir)
 
     train_logger.close()
     eval_logger.close()
