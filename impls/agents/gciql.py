@@ -278,7 +278,7 @@ def get_config():
         dict(
             # Agent hyperparameters.
             agent_name='gciql',  # Agent name.
-            lr=1e-4  # Learning rate.3e-4,
+            lr=1e-4,  # Learning rate.3e-4,
             batch_size=512,  # Batch size. 1024
             actor_hidden_dims=(256, 256, 256),  # Actor network hidden dimensions.(512, 512, 512)
             value_hidden_dims=(256, 256, 256),  # Value network hidden dimensions.(512, 512, 512)
