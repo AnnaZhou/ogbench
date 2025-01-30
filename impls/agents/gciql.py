@@ -278,16 +278,16 @@ def get_config():
         dict(
             # Agent hyperparameters.
             agent_name='gciql',  # Agent name.
-            lr=3e-4,  # Learning rate.
-            batch_size=1024,  # Batch size.
-            actor_hidden_dims=(512, 512, 512),  # Actor network hidden dimensions.
-            value_hidden_dims=(512, 512, 512),  # Value network hidden dimensions.
+            lr=1e-4  # Learning rate.3e-4,
+            batch_size=512,  # Batch size. 1024
+            actor_hidden_dims=(256, 256, 256),  # Actor network hidden dimensions.(512, 512, 512)
+            value_hidden_dims=(256, 256, 256),  # Value network hidden dimensions.(512, 512, 512)
             layer_norm=True,  # Whether to use layer normalization.
             discount=0.99,  # Discount factor.
-            tau=0.005,  # Target network update rate.
-            expectile=0.9,  # IQL expectile.
+            tau=0.001,  # Target network update rate.0.005
+            expectile=0.7,  # IQL expectile.0.9
             actor_loss='ddpgbc',  # Actor loss type ('awr' or 'ddpgbc').
-            alpha=0.3,  # Temperature in AWR or BC coefficient in DDPG+BC.
+            alpha=0.1,  # Temperature in AWR or BC coefficient in DDPG+BC.0.3
             const_std=True,  # Whether to use constant standard deviation for the actor.
             discrete=False,  # Whether the action space is discrete.
             encoder=ml_collections.config_dict.placeholder(str),  # Visual encoder name (None, 'impala_small', etc.).
