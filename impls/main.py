@@ -134,7 +134,12 @@ def main(_):
             eval_metrics = {}
             overall_metrics = defaultdict(list)
 
-            task_infos = getattr(env.unwrapped, 'task_infos', env.task_infos)
+            #task_infos = getattr(env.unwrapped, 'task_infos', env.task_infos)
+            try:
+                task_infos = env.unwrapped.task_infos
+            except AttributeError:
+                task_infos = [{'task_name': 'default_task'}]
+
             num_tasks = FLAGS.eval_tasks if FLAGS.eval_tasks is not None else len(task_infos)
 
             # Disable tqdm for evaluation loop to reduce printing
