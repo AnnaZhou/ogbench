@@ -6,8 +6,9 @@ from collections import defaultdict
 
 import jax
 import numpy as np
+# If you still want quiet tqdm, you can import tqdm with disable=True
 import tqdm
-#import wandb
+# import wandb
 from absl import app, flags
 from agents import agents
 from ml_collections import config_flags
@@ -15,7 +16,7 @@ from utils.datasets import Dataset, GCDataset, HGCDataset
 from utils.env_utils import make_env_and_datasets
 from utils.evaluation import evaluate
 from utils.flax_utils import restore_agent, save_agent
-from utils.log_utils import CsvLogger, get_exp_name, get_flag_dict #, get_wandb_video, setup_wandb
+from utils.log_utils import CsvLogger, get_exp_name, get_flag_dict  # , get_wandb_video, setup_wandb
 
 FLAGS = flags.FLAGS
 
@@ -45,9 +46,9 @@ config_flags.DEFINE_config_file('agent', 'agents/gciql.py', lock_config=False)
 def main(_):
     # Set up logger.
     exp_name = get_exp_name(FLAGS.seed)
-    #setup_wandb(project='OGBench', group=FLAGS.run_group, name=exp_name)
+    # setup_wandb(project='OGBench', group=FLAGS.run_group, name=exp_name)
 
-    #FLAGS.save_dir = os.path.join(FLAGS.save_dir, wandb.run.project, FLAGS.run_group, exp_name)
+    # FLAGS.save_dir = os.path.join(FLAGS.save_dir, wandb.run.project, FLAGS.run_group, exp_name)
     os.makedirs(FLAGS.save_dir, exist_ok=True)
     flag_dict = get_flag_dict()
     with open(os.path.join(FLAGS.save_dir, 'flags.json'), 'w') as f:
@@ -55,7 +56,9 @@ def main(_):
 
     # Set up environment and dataset.
     config = FLAGS.agent
-    env, train_dataset, val_dataset = make_env_and_datasets(FLAGS.env_name, frame_stack=config['frame_stack'])
+    env, train_dataset, val_dataset = make_env_and_datasets(
+        FLAGS.env_name, frame_stack=config['frame_stack']
+    )
 
     dataset_class = {
         'GCDataset': GCDataset,
@@ -82,21 +85,32 @@ def main(_):
         config,
     )
 
-    # Restore agent.
+    # Restore agent if specified.
     if FLAGS.restore_path is not None:
         agent = restore_agent(agent, FLAGS.restore_path, FLAGS.restore_epoch)
 
-    # Train agent.
+    # Create CSV loggers.
     train_logger = CsvLogger(os.path.join(FLAGS.save_dir, 'train.csv'))
     eval_logger = CsvLogger(os.path.join(FLAGS.save_dir, 'eval.csv'))
+
     first_time = time.time()
     last_time = time.time()
-    for i in tqdm.tqdm(range(1, FLAGS.train_steps + 1), smoothing=0.1, dynamic_ncols=True):
-        # Update agent.
+
+    # ------------------------
+    # Main training loop
+    # ------------------------
+    for i in range(1, FLAGS.train_steps + 1):
+        # Sample a batch and update agent.
         batch = train_dataset.sample(config['batch_size'])
         agent, update_info = agent.update(batch)
 
-        # Log metrics.
+        # Print loss every 10 batches (adapt the key 'loss' if necessary)
+        if i % 10 == 0:
+            # If your update_info has a different key, change 'loss' accordingly
+            current_loss = update_info.get('loss', 'N/A')
+            print(f"Batch {i}: loss = {current_loss}")
+
+        # Log metrics every FLAGS.log_interval steps.
         if i % FLAGS.log_interval == 0:
             train_metrics = {f'training/{k}': v for k, v in update_info.items()}
             if val_dataset is not None:
@@ -106,21 +120,25 @@ def main(_):
             train_metrics['time/epoch_time'] = (time.time() - last_time) / FLAGS.log_interval
             train_metrics['time/total_time'] = time.time() - first_time
             last_time = time.time()
-            #wandb.log(train_metrics, step=i)
+            # wandb.log(train_metrics, step=i)
             train_logger.log(train_metrics, step=i)
 
-        # Evaluate agent.
+        # Evaluate agent every FLAGS.eval_interval steps.
         if i == 1 or i % FLAGS.eval_interval == 0:
             if FLAGS.eval_on_cpu:
                 eval_agent = jax.device_put(agent, device=jax.devices('cpu')[0])
             else:
                 eval_agent = agent
+
             renders = []
             eval_metrics = {}
             overall_metrics = defaultdict(list)
-            task_infos = env.unwrapped.task_infos if hasattr(env.unwrapped, 'task_infos') else env.task_infos
+
+            task_infos = getattr(env.unwrapped, 'task_infos', env.task_infos)
             num_tasks = FLAGS.eval_tasks if FLAGS.eval_tasks is not None else len(task_infos)
-            for task_id in tqdm.trange(1, num_tasks + 1):
+
+            # Disable tqdm for evaluation loop to reduce printing
+            for task_id in tqdm.trange(1, num_tasks + 1, disable=True):
                 task_name = task_infos[task_id - 1]['task_name']
                 eval_info, trajs, cur_renders = evaluate(
                     agent=eval_agent,
@@ -141,20 +159,21 @@ def main(_):
                 for k, v in eval_info.items():
                     if k in metric_names:
                         overall_metrics[k].append(v)
+
             for k, v in overall_metrics.items():
                 eval_metrics[f'evaluation/overall_{k}'] = np.mean(v)
 
-            #if FLAGS.video_episodes > 0:
-            #    video = get_wandb_video(renders=renders, n_cols=num_tasks)
-            #    eval_metrics['video'] = video
+            # if FLAGS.video_episodes > 0:
+            #     video = get_wandb_video(renders=renders, n_cols=num_tasks)
+            #     eval_metrics['video'] = video
 
-            #wandb.log(eval_metrics, step=i)
+            # wandb.log(eval_metrics, step=i)
             eval_logger.log(eval_metrics, step=i)
 
-        # Save agent.
+        # Save agent every FLAGS.save_interval steps.
         if i % FLAGS.save_interval == 0:
             save_agent(agent, FLAGS.save_dir, i)
-            print(FLAGS.save_dir)
+            print(f"Agent saved at step {i} -> {FLAGS.save_dir}")
 
     train_logger.close()
     eval_logger.close()
