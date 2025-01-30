@@ -6,10 +6,8 @@ from collections import defaultdict
 
 import jax
 import numpy as np
-# If you still want quiet tqdm, you can import tqdm with disable=True
-import tqdm
-# import wandb
 from absl import app, flags
+# import wandb
 from agents import agents
 from ml_collections import config_flags
 from utils.datasets import Dataset, GCDataset, HGCDataset
@@ -48,7 +46,6 @@ def main(_):
     exp_name = get_exp_name(FLAGS.seed)
     # setup_wandb(project='OGBench', group=FLAGS.run_group, name=exp_name)
 
-    # FLAGS.save_dir = os.path.join(FLAGS.save_dir, wandb.run.project, FLAGS.run_group, exp_name)
     os.makedirs(FLAGS.save_dir, exist_ok=True)
     flag_dict = get_flag_dict()
     with open(os.path.join(FLAGS.save_dir, 'flags.json'), 'w') as f:
@@ -104,22 +101,38 @@ def main(_):
         batch = train_dataset.sample(config['batch_size'])
         agent, update_info = agent.update(batch)
 
-        # Print loss every 10 batches (adapt the key 'loss' if necessary)
+        # ------------------------------------------------------------------
+        # Get the batch training loss using total_loss
+        #   - This returns (loss, info) where 'loss' is the sum of actor,
+        #     critic, and value losses. 'info' contains each component.
+        # ------------------------------------------------------------------
+        train_loss, train_loss_info = agent.total_loss(batch, grad_params=None)
+        # Insert them into update_info for logging
+        update_info['loss/total'] = float(train_loss)
+        for k, v in train_loss_info.items():
+            # e.g. actor/actor_loss, critic/critic_loss, value/value_loss, etc.
+            update_info[f'loss/{k}'] = float(v)
+
+        # Print loss every 10 batches
         if i % 10 == 0:
-            # If your update_info has a different key, change 'loss' accordingly
-            current_loss = update_info.get('loss', 'N/A')
-            print(f"Batch {i}: loss = {current_loss}")
+            print(f"Batch {i}: total_loss = {train_loss:.4f}")
 
         # Log metrics every FLAGS.log_interval steps.
         if i % FLAGS.log_interval == 0:
             train_metrics = {f'training/{k}': v for k, v in update_info.items()}
+            # Validation
             if val_dataset is not None:
                 val_batch = val_dataset.sample(config['batch_size'])
-                _, val_info = agent.total_loss(val_batch, grad_params=None)
-                train_metrics.update({f'validation/{k}': v for k, v in val_info.items()})
+                val_loss, val_info = agent.total_loss(val_batch, grad_params=None)
+                # You can log the validation total loss similarly:
+                train_metrics['validation/loss/total'] = float(val_loss)
+                for k, v in val_info.items():
+                    train_metrics[f'validation/loss/{k}'] = float(v)
+
             train_metrics['time/epoch_time'] = (time.time() - last_time) / FLAGS.log_interval
             train_metrics['time/total_time'] = time.time() - first_time
             last_time = time.time()
+
             # wandb.log(train_metrics, step=i)
             train_logger.log(train_metrics, step=i)
 
@@ -134,7 +147,10 @@ def main(_):
             eval_metrics = {}
             overall_metrics = defaultdict(list)
 
-            #task_infos = getattr(env.unwrapped, 'task_infos', env.task_infos)
+            # If your environment does not have task_infos, you may need
+            # a fallback or skip multi-task handling:
+            #task_infos = getattr(env.unwrapped, 'task_infos', [{'task_name': 'default_task'}])
+            # task_infos = getattr(env.unwrapped, 'task_infos', env.task_infos)
             try:
                 task_infos = env.unwrapped.task_infos
             except AttributeError:
@@ -142,8 +158,8 @@ def main(_):
 
             num_tasks = FLAGS.eval_tasks if FLAGS.eval_tasks is not None else len(task_infos)
 
-            # Disable tqdm for evaluation loop to reduce printing
-            for task_id in tqdm.trange(1, num_tasks + 1, disable=True):
+            # For a quieter loop, we disable tqdm
+            for task_id in range(1, num_tasks + 1):
                 task_name = task_infos[task_id - 1]['task_name']
                 eval_info, trajs, cur_renders = evaluate(
                     agent=eval_agent,
