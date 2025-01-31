@@ -286,7 +286,7 @@ def get_config():
             discount=0.99,  # Discount factor.
             tau=0.001,  # Target network update rate.0.005
             expectile=0.7,  # IQL expectile.0.9
-            actor_loss='ddpgbc',  # Actor loss type ('awr' or 'ddpgbc').
+            actor_loss='awr',#'ddpgbc',  # Actor loss type ('awr' or 'ddpgbc').
             alpha=0.1,  # Temperature in AWR or BC coefficient in DDPG+BC.0.3
             const_std=True,  # Whether to use constant standard deviation for the actor.
             discrete=False,  # Whether the action space is discrete.
