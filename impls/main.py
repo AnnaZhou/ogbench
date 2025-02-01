@@ -25,7 +25,7 @@ flags.DEFINE_string('save_dir', 'exp/', 'Save directory.')
 flags.DEFINE_string('restore_path', None, 'Restore path.')
 flags.DEFINE_integer('restore_epoch', None, 'Restore epoch.')
 
-flags.DEFINE_integer('train_steps', 30000, 'Number of training steps.')
+flags.DEFINE_integer('train_steps', 40000, 'Number of training steps.')
 flags.DEFINE_integer('log_interval', 1000, 'Logging interval.')
 flags.DEFINE_integer('eval_interval', 1000, 'Evaluation interval.')
 flags.DEFINE_integer('save_interval', 1000, 'Saving interval.')
