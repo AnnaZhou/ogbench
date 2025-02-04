@@ -25,7 +25,7 @@ flags.DEFINE_string('save_dir', 'exp/', 'Save directory.')
 flags.DEFINE_string('restore_path', None, 'Restore path.')
 flags.DEFINE_integer('restore_epoch', None, 'Restore epoch.')
 
-flags.DEFINE_integer('train_steps', 100, 'Number of training steps.')
+flags.DEFINE_integer('train_steps', 200, 'Number of training steps.')
 flags.DEFINE_integer('log_interval', 50, 'Logging interval.')
 flags.DEFINE_integer('eval_interval', 50, 'Evaluation interval.')
 flags.DEFINE_integer('save_interval', 50, 'Saving interval.')
@@ -115,6 +115,8 @@ def main(_):
     # Restore agent if specified.
     if FLAGS.restore_path is not None:
         agent = restore_agent(agent, FLAGS.restore_path, FLAGS.restore_epoch)
+        # If you saved at, say, step 10000, you can restore by:
+        #agent = restore_agent(agent, FLAGS.save_dir, 10000)
 
     # Create CSV loggers.
     train_logger = CsvLogger(os.path.join(FLAGS.save_dir, 'train.csv'))
