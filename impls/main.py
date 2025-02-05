@@ -115,6 +115,7 @@ def main(_):
     # Restore agent if specified.
     if FLAGS.restore_path is not None:
         agent = restore_agent(agent, FLAGS.restore_path, FLAGS.restore_epoch)
+        print(FLAGS.restore_path, FLAGS.restore_epoch)
         # If you saved at, say, step 10000, you can restore by:
         #agent = restore_agent(agent, FLAGS.save_dir, 10000)
 
