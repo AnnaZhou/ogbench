@@ -42,7 +42,7 @@ flags.DEFINE_integer('offline_steps', 100, 'Number of offline steps.')
 flags.DEFINE_integer('online_steps', 0, 'Number of online steps.')
 flags.DEFINE_integer('buffer_size', 2000, 'Replay buffer size.')
 flags.DEFINE_float('p_aug', None, 'Probability of applying image augmentation.')
-flags.DEFINE_integer('frame_stack', None, 'Number of frames to stack.')
+#flags.DEFINE_integer('frame_stack', None, 'Number of frames to stack.')
 flags.DEFINE_integer('balanced_sampling', 0, 'Whether to use balanced sampling for online fine-tuning.')
 
 
