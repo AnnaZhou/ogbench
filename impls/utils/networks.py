@@ -515,6 +515,9 @@ class GCIQEValue(nn.Module):
             return v, phi_s, phi_g
         else:
             return v
+
+
+
 class ActorVectorField(nn.Module):
     """Actor vector field network for flow matching.
 
@@ -554,7 +557,7 @@ class ActorVectorField(nn.Module):
 
         return v
 
-    class Value(nn.Module):
+class Value(nn.Module):
         """Value/critic network.
 
         This module can be used for both value V(s, g) and critic Q(s, a, g) functions.
