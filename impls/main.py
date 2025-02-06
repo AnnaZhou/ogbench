@@ -38,7 +38,15 @@ flags.DEFINE_integer('video_episodes', 1, 'Number of video episodes for each tas
 flags.DEFINE_integer('video_frame_skip', 3, 'Frame skip for videos.')
 flags.DEFINE_integer('eval_on_cpu', 1, 'Whether to evaluate on CPU.')
 
-config_flags.DEFINE_config_file('agent', 'agents/gciql.py', lock_config=False)
+flags.DEFINE_integer('offline_steps', 100, 'Number of offline steps.')
+flags.DEFINE_integer('online_steps', 0, 'Number of online steps.')
+flags.DEFINE_integer('buffer_size', 2000, 'Replay buffer size.')
+flags.DEFINE_float('p_aug', None, 'Probability of applying image augmentation.')
+flags.DEFINE_integer('frame_stack', None, 'Number of frames to stack.')
+flags.DEFINE_integer('balanced_sampling', 0, 'Whether to use balanced sampling for online fine-tuning.')
+
+
+config_flags.DEFINE_config_file('agent', 'agents/fql.py', lock_config=False)
 
 
 import os
@@ -51,6 +59,7 @@ def save_agent(agent, save_dir, step):
     checkpoint_state = {
         'agent': agent,   # agent state (parameters, optimizer state, RNG, etc.)
         'step': step,
+        'params': agent.params,
     }
     ckpt_path = os.path.join(save_dir, f"checkpoint_{step}.ckpt")
     with open(ckpt_path, "wb") as f:
