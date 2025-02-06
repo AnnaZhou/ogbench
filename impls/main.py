@@ -139,11 +139,11 @@ def main(_):
             next_ob, reward, terminated, truncated, info = env.step(action.copy())
             done = terminated or truncated
 
-            if 'antmaze' in FLAGS.env_name and (
-                'diverse' in FLAGS.env_name or 'play' in FLAGS.env_name or 'umaze' in FLAGS.env_name
-            ):
-                # Adjust reward for D4RL antmaze.
-                reward = reward - 1.0
+            #if 'antmaze' in FLAGS.env_name and (
+            #    'diverse' in FLAGS.env_name or 'play' in FLAGS.env_name or 'umaze' in FLAGS.env_name
+            #):
+            #    # Adjust reward for D4RL antmaze.
+            #    reward = reward - 1.0
 
             replay_buffer.add_transition(
                 dict(
