@@ -13,7 +13,7 @@ from absl import app, flags
 from ml_collections import config_flags
 
 from agents import agents
-from envs.env_utils import make_env_and_datasets
+from utils.env_utils import make_env_and_datasets
 from utils.datasets import Dataset, ReplayBuffer
 from utils.evaluation import evaluate, flatten
 from utils.flax_utils import restore_agent, save_agent
