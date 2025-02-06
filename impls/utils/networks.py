@@ -553,3 +553,47 @@ class ActorVectorField(nn.Module):
         v = self.mlp(inputs)
 
         return v
+
+    class Value(nn.Module):
+        """Value/critic network.
+
+        This module can be used for both value V(s, g) and critic Q(s, a, g) functions.
+
+        Attributes:
+            hidden_dims: Hidden layer dimensions.
+            layer_norm: Whether to apply layer normalization.
+            num_ensembles: Number of ensemble components.
+            encoder: Optional encoder module to encode the inputs.
+        """
+
+        hidden_dims: Sequence[int]
+        layer_norm: bool = True
+        num_ensembles: int = 2
+        encoder: nn.Module = None
+
+        def setup(self):
+            mlp_class = MLP
+            if self.num_ensembles > 1:
+                mlp_class = ensemblize(mlp_class, self.num_ensembles)
+            value_net = mlp_class((*self.hidden_dims, 1), activate_final=False, layer_norm=self.layer_norm)
+
+            self.value_net = value_net
+
+        def __call__(self, observations, actions=None):
+            """Return values or critic values.
+
+            Args:
+                observations: Observations.
+                actions: Actions (optional).
+            """
+            if self.encoder is not None:
+                inputs = [self.encoder(observations)]
+            else:
+                inputs = [observations]
+            if actions is not None:
+                inputs.append(actions)
+            inputs = jnp.concatenate(inputs, axis=-1)
+
+            v = self.value_net(inputs).squeeze(-1)
+
+            return v
