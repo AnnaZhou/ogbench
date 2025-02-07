@@ -7,7 +7,7 @@ import numpy as np
 import ogbench
 from gymnasium.spaces import Box
 
-from utils.datasets import Dataset
+from utils.fql_datasets import Dataset
 
 
 class EpisodeMonitor(gymnasium.Wrapper):
