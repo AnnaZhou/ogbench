@@ -23,7 +23,7 @@ FLAGS = flags.FLAGS
 
 flags.DEFINE_string('run_group', 'Debug', 'Run group.')
 flags.DEFINE_integer('seed', 0, 'Random seed.')
-flags.DEFINE_string('env_name', 'scene-play-singletask-v0', 'Environment (dataset) name.')
+flags.DEFINE_string('env_name', 'cube-double-play-singletask-v0', 'Environment (dataset) name.')
 flags.DEFINE_string('save_dir', 'exp/', 'Save directory.')
 flags.DEFINE_string('restore_path', None, 'Restore path.')
 flags.DEFINE_integer('restore_epoch', None, 'Restore epoch.')
@@ -53,7 +53,6 @@ def main(_):
 
     #FLAGS.save_dir = os.path.join(FLAGS.save_dir, wandb.run.project, FLAGS.run_group, exp_name)
     os.makedirs(FLAGS.save_dir, exist_ok=True)
-
     flag_dict = get_flag_dict()
     with open(os.path.join(FLAGS.save_dir, 'flags.json'), 'w') as f:
         json.dump(flag_dict, f)
@@ -61,7 +60,6 @@ def main(_):
     # Make environment and datasets.
     config = FLAGS.agent
     env, eval_env, train_dataset, val_dataset = make_env_and_datasets(FLAGS.env_name, frame_stack=FLAGS.frame_stack)
-
     if FLAGS.video_episodes > 0:
         assert 'singletask' in FLAGS.env_name, 'Rendering is currently only supported for OGBench environments.'
     if FLAGS.online_steps > 0:
@@ -139,11 +137,11 @@ def main(_):
             next_ob, reward, terminated, truncated, info = env.step(action.copy())
             done = terminated or truncated
 
-            #if 'antmaze' in FLAGS.env_name and (
-            #    'diverse' in FLAGS.env_name or 'play' in FLAGS.env_name or 'umaze' in FLAGS.env_name
-            #):
-            #    # Adjust reward for D4RL antmaze.
-            #    reward = reward - 1.0
+            if 'antmaze' in FLAGS.env_name and (
+                'diverse' in FLAGS.env_name or 'play' in FLAGS.env_name or 'umaze' in FLAGS.env_name
+            ):
+                # Adjust reward for D4RL antmaze.
+                reward = reward - 1.0
 
             replay_buffer.add_transition(
                 dict(
@@ -187,7 +185,7 @@ def main(_):
             train_metrics['time/total_time'] = time.time() - first_time
             train_metrics.update(expl_metrics)
             last_time = time.time()
-            #wandb.log(train_metrics, step=i)
+            wandb.log(train_metrics, step=i)
             train_logger.log(train_metrics, step=i)
 
         # Evaluate agent.
@@ -207,8 +205,8 @@ def main(_):
                 eval_metrics[f'evaluation/{k}'] = v
 
             #if FLAGS.video_episodes > 0:
-                #video = get_wandb_video(renders=renders)
-                #eval_metrics['video'] = video
+            #    video = get_wandb_video(renders=renders)
+            #    eval_metrics['video'] = video
 
             #wandb.log(eval_metrics, step=i)
             eval_logger.log(eval_metrics, step=i)
