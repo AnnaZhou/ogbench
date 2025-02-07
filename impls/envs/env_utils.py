@@ -102,8 +102,9 @@ def make_env_and_datasets(env_name, frame_stack=None, action_clip_eps=1e-5):
 
     if 'singletask' in env_name:
         # OGBench.
-        env, train_dataset, val_dataset = ogbench.make_env_and_datasets(env_name)
-        eval_env = ogbench.make_env_and_datasets(env_name, env_only=True)
+        env_name1 = 'scene-play-v0'
+        env, train_dataset, val_dataset = ogbench.make_env_and_datasets(env_name1)
+        eval_env = ogbench.make_env_and_datasets(env_name1, env_only=True)
         env = EpisodeMonitor(env, filter_regexes=['.*privileged.*', '.*proprio.*'])
         eval_env = EpisodeMonitor(eval_env, filter_regexes=['.*privileged.*', '.*proprio.*'])
         train_dataset = Dataset.create(**train_dataset)
