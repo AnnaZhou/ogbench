@@ -23,14 +23,14 @@ FLAGS = flags.FLAGS
 
 flags.DEFINE_string('run_group', 'Debug', 'Run group.')
 flags.DEFINE_integer('seed', 0, 'Random seed.')
-flags.DEFINE_string('env_name', 'cube-double-play-singletask-v0', 'Environment (dataset) name.')
+flags.DEFINE_string('env_name', 'scene-play-singletask-v0', 'Environment (dataset) name.')
 flags.DEFINE_string('save_dir', 'exp/', 'Save directory.')
 flags.DEFINE_string('restore_path', None, 'Restore path.')
 flags.DEFINE_integer('restore_epoch', None, 'Restore epoch.')
 
-flags.DEFINE_integer('offline_steps', 100, 'Number of offline steps.')
+flags.DEFINE_integer('offline_steps', 300, 'Number of offline steps.')
 flags.DEFINE_integer('online_steps', 0, 'Number of online steps.')
-flags.DEFINE_integer('buffer_size', 200, 'Replay buffer size.')
+flags.DEFINE_integer('buffer_size', 300, 'Replay buffer size.')
 flags.DEFINE_integer('log_interval', 50, 'Logging interval.')
 flags.DEFINE_integer('eval_interval', 100, 'Evaluation interval.')
 flags.DEFINE_integer('save_interval', 100, 'Saving interval.')
@@ -185,7 +185,7 @@ def main(_):
             train_metrics['time/total_time'] = time.time() - first_time
             train_metrics.update(expl_metrics)
             last_time = time.time()
-            wandb.log(train_metrics, step=i)
+            #wandb.log(train_metrics, step=i)
             train_logger.log(train_metrics, step=i)
 
         # Evaluate agent.
