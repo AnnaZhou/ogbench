@@ -13,7 +13,7 @@ from absl import app, flags
 from ml_collections import config_flags
 
 from agents import agents
-from utils.env_utils import make_env_and_datasets
+from envs.env_utils import make_env_and_datasets
 from utils.datasets import Dataset, ReplayBuffer
 from utils.evaluation import evaluate, flatten
 from utils.flax_utils import restore_agent, save_agent
@@ -23,7 +23,7 @@ FLAGS = flags.FLAGS
 
 flags.DEFINE_string('run_group', 'Debug', 'Run group.')
 flags.DEFINE_integer('seed', 0, 'Random seed.')
-flags.DEFINE_string('env_name', 'visual-cube-single-play-singletask-task1-v0', 'Environment (dataset) name.')
+flags.DEFINE_string('env_name', 'scene-play-v0', 'Environment (dataset) name.')
 flags.DEFINE_string('save_dir', 'exp/', 'Save directory.')
 flags.DEFINE_string('restore_path', None, 'Restore path.')
 flags.DEFINE_integer('restore_epoch', None, 'Restore epoch.')
