@@ -7,9 +7,9 @@ import jax.numpy as jnp
 import ml_collections
 import optax
 
-from utils.encoders import encoder_modules
+from utils.fql_encoders import encoder_modules
 from utils.fql_flax_utils import ModuleDict, TrainState, nonpytree_field
-from utils.networks import ActorVectorField, Value
+from utils.fql_networks import ActorVectorField, Value
 
 
 class FQLAgent(flax.struct.PyTreeNode):
