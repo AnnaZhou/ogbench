@@ -13,7 +13,7 @@ from ml_collections import config_flags
 from utils.datasets import Dataset, GCDataset, HGCDataset
 from utils.env_utils import make_env_and_datasets
 from utils.evaluation import evaluate
-#from utils.flax_utils import restore_agent, save_agent
+from utils.flax_utils import restore_agent, save_agent
 from utils.log_utils import CsvLogger, get_exp_name, get_flag_dict  # , get_wandb_video, setup_wandb
 
 FLAGS = flags.FLAGS
@@ -52,32 +52,7 @@ config_flags.DEFINE_config_file('agent', 'agents/hiql.py', lock_config=False)
 import os
 import flax.serialization
 
-def save_agent(agent, save_dir, step):
-    """Save the agent’s state to a file."""
-    os.makedirs(save_dir, exist_ok=True)
-    # Create a state dictionary. You can add more fields as needed.
-    checkpoint_state = {
-        'agent': agent,   # agent state (parameters, optimizer state, RNG, etc.)
-        'step': step,
-        'params': agent.params,
-    }
-    ckpt_path = os.path.join(save_dir, f"checkpoint_{step}.ckpt")
-    with open(ckpt_path, "wb") as f:
-        f.write(flax.serialization.to_bytes(checkpoint_state))
-    print(f"Checkpoint saved at {ckpt_path}")
 
-def restore_agent(agent, restore_dir, restore_step):
-    """Restore the agent’s state from a file."""
-    ckpt_path = os.path.join(restore_dir, f"checkpoint_{restore_step}.ckpt")
-    with open(ckpt_path, "rb") as f:
-        ckpt_bytes = f.read()
-    # The second argument is your "empty" agent with the same structure.
-    restored_state = flax.serialization.from_bytes({}, ckpt_bytes)
-    # Here we assume that you want to update your agent with the saved state.
-    # How you merge restored_state['agent'] into your current agent depends on your design.
-    agent = restored_state['agent']
-    print(f"Checkpoint restored from {ckpt_path}")
-    return agent
 
 
 

@@ -65,9 +65,12 @@ class Dataset(FrozenDict):
 
     def get_random_idxs(self, num_idxs):
         """Return `num_idxs` random indices."""
+
         if 'valids' in self._dict:
+            print('valids=1')
             return self.valid_idxs[np.random.randint(len(self.valid_idxs), size=num_idxs)]
         else:
+            print('valids=0')
             return np.random.randint(self.size, size=num_idxs)
 
     def sample(self, batch_size: int, idxs=None):
