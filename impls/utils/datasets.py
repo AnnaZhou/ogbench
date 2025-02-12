@@ -59,6 +59,7 @@ class Dataset(FrozenDict):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.size = get_size(self._dict)
+
         if 'valids' in self._dict:
             (self.valid_idxs,) = np.nonzero(self['valids'] > 0)
 

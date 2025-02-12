@@ -55,6 +55,7 @@ class Dataset(FrozenDict):
         self.p_aug = None  # Image augmentation probability; set outside the class.
         self.return_next_actions = False  # Whether to additionally return next actions; set outside the class.
 
+
         # Compute terminal and initial locations.
         self.terminal_locs = np.nonzero(self['terminals'] > 0)[0]
         self.initial_locs = np.concatenate([[0], self.terminal_locs[:-1] + 1])
@@ -87,31 +88,6 @@ class Dataset(FrozenDict):
             # Apply random-crop image augmentation.
             if np.random.rand() < self.p_aug:
                 self.augment(batch, ['observations', 'next_observations'])
-
-        value_goal_idxs = self.sample_goals(
-            idxs,
-            self.config['value_p_curgoal'],
-            self.config['value_p_trajgoal'],
-            self.config['value_p_randomgoal'],
-            self.config['value_geom_sample'],
-        )
-        actor_goal_idxs = self.sample_goals(
-            idxs,
-            self.config['actor_p_curgoal'],
-            self.config['actor_p_trajgoal'],
-            self.config['actor_p_randomgoal'],
-            self.config['actor_geom_sample'],
-        )
-
-        batch['value_goals'] = self.get_observations(value_goal_idxs)
-        batch['actor_goals'] = self.get_observations(actor_goal_idxs)
-        successes = (idxs == value_goal_idxs).astype(float)
-        batch['masks'] = 1.0 - successes
-        batch['rewards'] = successes - (1.0 if self.config['gc_negative'] else 0.0)
-
-        if self.config['p_aug'] is not None and not evaluation:
-            if np.random.rand() < self.config['p_aug']:
-                self.augment(batch, ['observations', 'next_observations', 'value_goals', 'actor_goals'])
 
         return batch
 
