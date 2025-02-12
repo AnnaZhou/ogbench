@@ -46,7 +46,7 @@ flags.DEFINE_float('p_aug', None, 'Probability of applying image augmentation.')
 flags.DEFINE_integer('balanced_sampling', 0, 'Whether to use balanced sampling for online fine-tuning.')
 
 
-config_flags.DEFINE_config_file('agent', 'agents/fql.py', lock_config=False)
+config_flags.DEFINE_config_file('agent', 'agents/hiql.py', lock_config=False)
 
 
 import os
