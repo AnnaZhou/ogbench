@@ -19,6 +19,7 @@ from utils.evaluation import evaluate, flatten
 from utils.fql_flax_utils import restore_agent, save_agent
 from utils.log_utils import CsvLogger, get_exp_name, get_flag_dict#, get_wandb_video, setup_wandb
 
+
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string('run_group', 'Debug', 'Run group.')
