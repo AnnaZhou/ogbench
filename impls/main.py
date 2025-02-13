@@ -171,7 +171,7 @@ def main(_):
             # If your environment does not have task_infos, you may need
             # a fallback or skip multi-task handling:
             task_infos = getattr(env.unwrapped, 'task_infos', [{'task_name': 'default_task'}])
-            task_infos = getattr(env.unwrapped, 'task_infos', env.task_infos)
+            #task_infos = getattr(env.unwrapped, 'task_infos', env.task_infos)
             try:
                 task_infos = env.unwrapped.task_infos
             except AttributeError:
