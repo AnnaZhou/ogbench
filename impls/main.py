@@ -42,7 +42,7 @@ flags.DEFINE_integer('offline_steps', 100, 'Number of offline steps.')
 flags.DEFINE_integer('online_steps', 0, 'Number of online steps.')
 flags.DEFINE_integer('buffer_size', 200, 'Replay buffer size.')
 flags.DEFINE_float('p_aug', None, 'Probability of applying image augmentation.')
-#flags.DEFINE_integer('frame_stack', None, 'Number of frames to stack.')
+flags.DEFINE_integer('frame_stack', None, 'Number of frames to stack.')
 flags.DEFINE_integer('balanced_sampling', 0, 'Whether to use balanced sampling for online fine-tuning.')
 
 
@@ -170,8 +170,8 @@ def main(_):
 
             # If your environment does not have task_infos, you may need
             # a fallback or skip multi-task handling:
-            #task_infos = getattr(env.unwrapped, 'task_infos', [{'task_name': 'default_task'}])
-            # task_infos = getattr(env.unwrapped, 'task_infos', env.task_infos)
+            task_infos = getattr(env.unwrapped, 'task_infos', [{'task_name': 'default_task'}])
+            task_infos = getattr(env.unwrapped, 'task_infos', env.task_infos)
             try:
                 task_infos = env.unwrapped.task_infos
             except AttributeError:
