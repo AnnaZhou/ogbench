@@ -335,6 +335,7 @@ class HGCDataset(GCDataset):
             idxs = self.dataset.get_random_idxs(batch_size)
 
         batch = self.dataset.sample(batch_size, idxs)
+        #print(idxs,',')
         if self.config['frame_stack'] is not None:
             batch['observations'] = self.get_observations(idxs)
             batch['next_observations'] = self.get_observations(idxs + 1)

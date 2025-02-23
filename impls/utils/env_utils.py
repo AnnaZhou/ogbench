@@ -42,6 +42,7 @@ class EpisodeMonitor(gymnasium.Wrapper):
                 info['episode']['normalized_return'] = (
                     self.unwrapped.get_normalized_score(info['episode']['return']) * 100.0
                 )
+        print(info['episode']['length'])
 
         return observation, reward, terminated, truncated, info
 
