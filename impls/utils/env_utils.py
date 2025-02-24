@@ -74,6 +74,8 @@ class FrameStackWrapper(gymnasium.Wrapper):
             self.frames.append(ob)
         if 'goal' in info:
             info['goal'] = np.concatenate([info['goal']] * self.num_stack, axis=-1)
+        print('goal:',info['goal'])
+
         return self.get_observation(), info
 
     def step(self, action):
