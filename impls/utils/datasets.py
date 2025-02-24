@@ -349,8 +349,10 @@ class HGCDataset(GCDataset):
             self.config['value_geom_sample'],
         )
         batch['value_goals'] = self.get_observations(value_goal_idxs)
-
+        print(batch['value_goals'])
         successes = (idxs == value_goal_idxs).astype(float)
+        print('successes:', successes)
+
         batch['masks'] = 1.0 - successes
         batch['rewards'] = successes - (1.0 if self.config['gc_negative'] else 0.0)
 
