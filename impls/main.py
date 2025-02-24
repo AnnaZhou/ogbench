@@ -65,6 +65,7 @@ def main(_):
 
     os.makedirs(FLAGS.save_dir, exist_ok=True)
     flag_dict = get_flag_dict()
+    print(flag_dict)
     with open(os.path.join(FLAGS.save_dir, 'flags.json'), 'w') as f:
         json.dump(flag_dict, f)
 
@@ -78,6 +79,7 @@ def main(_):
         'GCDataset': GCDataset,
         'HGCDataset': HGCDataset,
     }[config['dataset_class']]
+    print(config)
     train_dataset = dataset_class(Dataset.create(**train_dataset), config)
     if val_dataset is not None:
         val_dataset = dataset_class(Dataset.create(**val_dataset), config)
