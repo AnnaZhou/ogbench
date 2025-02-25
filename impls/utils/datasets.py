@@ -349,6 +349,7 @@ class HGCDataset(GCDataset):
             self.config['value_geom_sample'],
         )
         batch['value_goals'] = self.get_observations(value_goal_idxs)
+        print('value_goal_idxs:')
         print(value_goal_idxs)
         successes = (idxs == value_goal_idxs).astype(float)
         print('successes:', successes)
@@ -360,7 +361,10 @@ class HGCDataset(GCDataset):
         final_state_idxs = self.terminal_locs[np.searchsorted(self.terminal_locs, idxs)]
         low_goal_idxs = np.minimum(idxs + self.config['subgoal_steps'], final_state_idxs)
         batch['low_actor_goals'] = self.get_observations(low_goal_idxs)
-
+        print('final_state_idxs:')
+        print(final_state_idxs)
+        print('low_goal_idxs:')
+        print(low_goal_idxs)
         # Sample high-level actor goals and set prediction targets.
         # High-level future goals.
         if self.config['actor_geom_sample']:
@@ -374,6 +378,7 @@ class HGCDataset(GCDataset):
                 (np.minimum(idxs + 1, final_state_idxs) * distances + final_state_idxs * (1 - distances))
             ).astype(int)
         high_traj_target_idxs = np.minimum(idxs + self.config['subgoal_steps'], high_traj_goal_idxs)
+        print('high_traj_target_idxs')
         print(high_traj_target_idxs)
         # High-level random goals.
         high_random_goal_idxs = self.dataset.get_random_idxs(batch_size)
@@ -386,8 +391,10 @@ class HGCDataset(GCDataset):
 
         batch['high_actor_goals'] = self.get_observations(high_goal_idxs)
         batch['high_actor_targets'] = self.get_observations(high_target_idxs)
-        print(high_goal_idxs)
+
+        print('high_target_idxs:')
         print(high_target_idxs)
+
         if self.config['p_aug'] is not None and not evaluation:
             if np.random.rand() < self.config['p_aug']:
                 self.augment(
