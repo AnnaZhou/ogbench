@@ -322,7 +322,7 @@ def get_config():
             # Agent hyperparameters.
             agent_name='hiql',  # Agent name.
             lr=3e-4,  # Learning rate.
-            batch_size=64,  # Batch size.
+            batch_size=128,  # Batch size.
             actor_hidden_dims=(128, 128, 128),  # Actor network hidden dimensions.
             value_hidden_dims=(128, 128, 128),  # Value network hidden dimensions.
             layer_norm=True,  # Whether to use layer normalization.
@@ -331,7 +331,7 @@ def get_config():
             expectile=0.7,  # IQL expectile.
             low_alpha=3.0,  # Low-level AWR temperature.
             high_alpha=3.0,  # High-level AWR temperature.
-            subgoal_steps=50,  # Subgoal steps.
+            subgoal_steps=100,  # Subgoal steps.
             rep_dim=10,  # Goal representation dimension.
             low_actor_rep_grad=False,  # Whether low-actor gradients flow to goal representation (use True for pixels).
             const_std=True,  # Whether to use constant standard deviation for the actors.
