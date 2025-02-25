@@ -352,7 +352,7 @@ class HGCDataset(GCDataset):
         print('value_goal_idxs:')
         print(value_goal_idxs)
         successes = (idxs == value_goal_idxs).astype(float)
-        print('successes:', successes)
+        print('successes:idxs == value_goal_idxs', successes)
 
         batch['masks'] = 1.0 - successes
         batch['rewards'] = successes - (1.0 if self.config['gc_negative'] else 0.0)
