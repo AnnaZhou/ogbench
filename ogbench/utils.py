@@ -7,10 +7,7 @@ from tqdm import tqdm
 
 
 DEFAULT_DATASET_DIR = '~/.ogbench/data'
-DATASET_URL = ''
-
-#DEFAULT_DATASET_DIR = '~/.ogbench/data'
-#DATASET_URL = 'https://rail.eecs.berkeley.edu/datasets/ogbench'
+DATASET_URL = '/content/drive/MyDrive/OGBench'
 
 def load_dataset(dataset_path, ob_dtype=np.float32, action_dtype=np.float32, compact_dataset=False):
     """Load OGBench dataset.
