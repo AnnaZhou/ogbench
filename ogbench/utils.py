@@ -141,8 +141,10 @@ def make_env_and_datasets(
         return env
 
     # Load datasets.
-    dataset_dir = os.path.expanduser(dataset_dir)
+    #dataset_dir = os.path.expanduser(dataset_dir)
+    dataset_dir = '/content/drive/MyDrive/OGBench'
     download_datasets([dataset_name], dataset_dir)
+
     train_dataset_path = os.path.join(dataset_dir, f'{dataset_name}.npz')
     val_dataset_path = os.path.join(dataset_dir, f'{dataset_name}-val.npz')
     ob_dtype = np.uint8 if ('visual' in env_name or 'powderworld' in env_name) else np.float32
