@@ -6,7 +6,7 @@ import numpy as np
 from tqdm import tqdm
 
 
-DEFAULT_DATASET_DIR = '~/.ogbench/data'
+DEFAULT_DATASET_DIR = '/content/drive/MyDrive/OGBench'
 DATASET_URL = '/content/drive/MyDrive/OGBench'
 
 def load_dataset(dataset_path, ob_dtype=np.float32, action_dtype=np.float32, compact_dataset=False):
@@ -98,21 +98,22 @@ def download_datasets(dataset_names, dataset_dir=DEFAULT_DATASET_DIR):
         dataset_file_names.append(f'{dataset_name}-val.npz')
     for dataset_file_name in dataset_file_names:
         dataset_file_path = os.path.join(dataset_dir, dataset_file_name)
+        print('dataset_file_path:', dataset_file_path)
         if not os.path.exists(dataset_file_path):
             dataset_url = f'{DATASET_URL}/{dataset_file_name}'
             print('Downloading dataset from:', dataset_url)
-            response = urllib.request.urlopen(dataset_url)
-            tmp_dataset_file_path = f'{dataset_file_path}.tmp'
-            with tqdm.wrapattr(
-                open(tmp_dataset_file_path, 'wb'),
-                'write',
-                miniters=1,
-                desc=dataset_url.split('/')[-1],
-                total=getattr(response, 'length', None),
-            ) as file:
-                for chunk in response:
-                    file.write(chunk)
-            os.rename(tmp_dataset_file_path, dataset_file_path)
+            #response = urllib.request.urlopen(dataset_url)
+            #tmp_dataset_file_path = f'{dataset_file_path}.tmp'
+            #with tqdm.wrapattr(
+            #    open(tmp_dataset_file_path, 'wb'),
+            #    'write',
+            #    miniters=1,
+            #    desc=dataset_url.split('/')[-1],
+            #    total=getattr(response, 'length', None),
+            #) as file:
+            #    for chunk in response:
+            #        file.write(chunk)
+            #os.rename(tmp_dataset_file_path, dataset_file_path)
 
 
 def make_env_and_datasets(
